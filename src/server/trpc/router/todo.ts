@@ -6,7 +6,6 @@ export const todoRouter = router({
         .input(
             z.object({
                 title: z.string().trim().min(1, { message: 'Please enter value longer than 1 character' }),
-                name: z.string().trim().min(1, { message: 'Please enter value longer than 1 character' }).optional(),
             }),
         )
         .mutation(async ({ input, ctx }) => {

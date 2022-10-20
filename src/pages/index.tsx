@@ -11,7 +11,7 @@ function Home() {
   const { data: todos, isLoading } = trpc.todo.getAll.useQuery()
 
   const createTodo = () => {
-    addTodo({ title: value.trim(), name: 'qwea' })
+    addTodo({ title: value.trim() })
     setValue('')
   }
 
