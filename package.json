@@ -2,6 +2,7 @@
   "name": "t3",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
