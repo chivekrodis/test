@@ -1,30 +1,50 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { trpc } from '../utils/trpc'
+import { useRouter } from 'next/router';
+import { Todo } from '@prisma/client';
 
-function Home() {
+interface HomeProps {
+  todos: Todo[]
+}
+
+const Home: FC<HomeProps> = ({ todos }) => {
+  const router = useRouter();
+
   const [value, setValue] = useState<string>('')
-  const todo = trpc.todo.create.useMutation()
+  // const { data: todos, isLoading, refetch } = trpc.todo.getAll.useQuery()
+  const todo = trpc.todo.create.useMutation({
+    onSuccess() {
+      // refetch()
+      router.replace(router.asPath);
+    }
+  })
   const { mutate: addTodo, error, isError } = todo
 
-  const { data: todos, isLoading } = trpc.todo.getAll.useQuery()
 
   const createTodo = () => {
     addTodo({ title: value.trim() })
     setValue('')
+
   }
 
   return (
     <>
-      <div className="flex w-full items-center justify-center pt-6 text-2xl text-blue-500">
-        <button onClick={createTodo}>CLICK</button>
-        <input
-          type="text"
-          onChange={(e) => setValue(e.target.value)}
-          value={value}
-        />
-
+      <div >
+        <div className="flex w-full items-center justify-around pt-6 text-2xl text-blue-500">
+          <input
+            className='border-2 rounded'
+            type="text"
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Please enter new todo..."
+            value={value}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                createTodo()
+              }
+            }}
+          />
+          <button onClick={createTodo}>CLICK</button>
+        </div>
         <div>
           {todos &&
             todos.map(({ id, title }) => {
@@ -34,6 +54,17 @@ function Home() {
       </div>
     </>
   )
+}
+
+export async function getServerSideProps() {
+  const res = await fetch('http://localhost:3000/api/trpc/todo.getAll');
+  const { result } = await res.json()
+
+  console.log(result.data.json);
+
+  return {
+    props: { todos: result.data.json }, // will be passed to the page component as props
+  }
 }
 
 export default Home
