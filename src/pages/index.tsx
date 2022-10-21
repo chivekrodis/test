@@ -2,6 +2,7 @@ import { FC, useState } from 'react'
 import { trpc } from '../utils/trpc'
 import { useRouter } from 'next/router';
 import { Todo } from '@prisma/client';
+import Head from 'next/head';
 
 interface HomeProps {
   todos: Todo[]
@@ -29,6 +30,11 @@ const Home: FC<HomeProps> = ({ todos }) => {
 
   return (
     <>
+      <Head>
+
+        <title>Todo</title>
+
+      </Head>
       <div >
         <div className="flex w-full items-center justify-around pt-6 text-2xl text-blue-500">
           <input
