@@ -57,7 +57,11 @@ const Home: FC<HomeProps> = ({ todos }) => {
 }
 
 export async function getServerSideProps() {
-  const res = await fetch('http://localhost:3000/api/trpc/todo.getAll');
+  const base = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}/api/trpc`
+    : 'http://localhost:3000/api/trpc';
+
+  const res = await fetch(`${base}/todo.getAll`);
   const { result } = await res.json()
 
   console.log(result.data.json);
