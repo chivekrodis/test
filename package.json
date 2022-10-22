@@ -4,7 +4,7 @@
   "private": true,
   "license": "Apache",
   "scripts": {
-    "build": "npx prisma migrate deploy && next build",
+    "build": "npx prisma migrate resolve --applied 20221022184857_checked && npx prisma migrate deploy && next build",
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
