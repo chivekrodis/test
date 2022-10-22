@@ -3,7 +3,7 @@ import type { Context } from "./context";
 import superjson from "superjson";
 
 const t = initTRPC.context<Context>().create({
-  transformer: superjson,
+  // transformer: superjson,
   errorFormatter({ shape }) {
     return shape;
   },

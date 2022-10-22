@@ -13,12 +13,15 @@ const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 };
 
+const baseUrl = getBaseUrl()
+export const url = `${baseUrl}/api/trpc`;
+
 export const trpc = createTRPCNext<AppRouter>({
   config({ ctx }) {
     if (typeof window !== 'undefined') {
       // during client requests
       return {
-        transformer: superjson, // optional - adds superjson serialization
+        // transformer: superjson, // optional - adds superjson serialization
         links: [
           httpBatchLink({
             url: '/api/trpc',
@@ -27,15 +30,15 @@ export const trpc = createTRPCNext<AppRouter>({
       };
     }
     // The server needs to know your app's full url
-    const url = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}/api/trpc`
-      : 'http://localhost:3000/api/trpc';
+    // const url = process.env.VERCEL_URL
+    //   ? `https://${process.env.VERCEL_URL}/api/trpc`
+    //   : 'http://localhost:3000/api/trpc';
 
     return {
-      transformer: superjson, // optional - adds superjson serialization
+      // transformer: superjson, // optional - adds superjson serialization
       links: [
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
+          url,
           /**
            * Set custom request headers on every request from tRPC
            * @link https://trpc.io/docs/v10/header
