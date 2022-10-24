@@ -19,12 +19,11 @@ export const todoRouter = router({
       console.log('a', a)
 
       return input
-      // [...]
     }),
   toggle: publicProcedure
     .input(
       z.object({
-        id: z.string().cuid(),
+        id: z.number(),
         checked: z.boolean(),
       }),
     )
@@ -36,6 +35,12 @@ export const todoRouter = router({
         data: { checked: !checked },
       })
     }),
+  remove: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ input, ctx }) => {
+    const { id } = input
+    await ctx.prisma.todo.delete({
+      where: { id },
+    })
+  }),
   getAll: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.todo.findMany({
       orderBy: { createdAt: 'asc' },

@@ -1,8 +1,8 @@
-import { FC } from "react"
+import { FC } from 'react'
 
 interface LayoutProps {
-    children: JSX.Element
+  children: JSX.Element
 }
 export const Layout: FC<LayoutProps> = ({ children }) => {
-    return <div className="mx-auto max-w-4xl p-2">{children}</div>
+  return <div className="max-w-xl max-md:p-2 md:mx-auto">{children}</div>
 }

@@ -24,6 +24,11 @@ const Home: FC<HomeProps> = ({ todos }) => {
   })
   const { mutate: addTodo, error, isError } = todo
 
+  const createTodo = () => {
+    addTodo({ title: value.trim() })
+    setValue('')
+  }
+
   const toggle = trpc.todo.toggle.useMutation({
     onSuccess() {
       router.replace(router.asPath)
@@ -31,10 +36,12 @@ const Home: FC<HomeProps> = ({ todos }) => {
   })
   const { mutate: toggleTogo } = toggle
 
-  const createTodo = () => {
-    addTodo({ title: value.trim() })
-    setValue('')
-  }
+  const remove = trpc.todo.remove.useMutation({
+    onSuccess() {
+      router.replace(router.asPath)
+    },
+  })
+  const { mutate: removeTodo } = remove
 
   return (
     <>
@@ -43,10 +50,10 @@ const Home: FC<HomeProps> = ({ todos }) => {
       </Head>
       <Layout>
         <>
-          <h1 className="text-center text-2xl font-bold text-gray-600 md:text-3xl">TODO APP</h1>
-          <div className="flex items-center justify-between pt-6 text-2xl text-blue-500 ">
+          <h1 className="mt-6 text-center text-2xl font-bold text-gray-600 md:text-3xl">TODO APP</h1>
+          <div className="mt-6 flex items-center justify-between">
             <input
-              className="rounded border-2"
+              className="mr-6 w-full rounded-md border-2 border-pink-500 py-2 px-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
               type="text"
               onChange={(e) => setValue(e.target.value)}
               placeholder="Please enter new todo..."
@@ -57,23 +64,36 @@ const Home: FC<HomeProps> = ({ todos }) => {
                 }
               }}
             />
-
             <Button handler={createTodo} label="Create" />
           </div>
-          <div>
-            {todos &&
-              todos.map(({ id, title, checked }) => {
+          {todos?.length > 0 && (
+            <div className="mt-4">
+              {todos.map(({ id, title, checked }) => {
                 return (
-                  <div
-                    className={`${checked ? 'line-through' : ''}`}
-                    key={id}
-                    onClick={() => toggleTogo({ id, checked })}
-                  >
-                    {title}
-                  </div>
+                  <li className="mb-1 flex items-center justify-between bg-slate-100 py-2" key={id}>
+                    <div
+                      className={`${checked ? 'line-through' : ''} ml-3 break-all hover:cursor-pointer`}
+                      onClick={() => toggleTogo({ id, checked })}
+                    >
+                      {title}
+                    </div>
+                    <span
+                      tabIndex={0}
+                      className="mx-3 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500 "
+                      onClick={() => removeTodo({ id })}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          removeTodo({ id })
+                        }
+                      }}
+                    >
+                      X
+                    </span>
+                  </li>
                 )
               })}
-          </div>
+            </div>
+          )}
         </>
       </Layout>
     </>
