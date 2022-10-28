@@ -2,7 +2,6 @@
 CREATE TABLE "Todo" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
-    "checkedId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -10,12 +9,16 @@ CREATE TABLE "Todo" (
 );
 
 -- CreateTable
-CREATE TABLE "Checked" (
+CREATE TABLE "Status" (
     "id" SERIAL NOT NULL,
     "checked" BOOLEAN NOT NULL DEFAULT false,
+    "todoId" INTEGER NOT NULL,
 
-    CONSTRAINT "Checked_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Status_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Status_todoId_key" ON "Status"("todoId");
+
 -- AddForeignKey
-ALTER TABLE "Todo" ADD CONSTRAINT "Todo_checkedId_fkey" FOREIGN KEY ("checkedId") REFERENCES "Checked"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Status" ADD CONSTRAINT "Status_todoId_fkey" FOREIGN KEY ("todoId") REFERENCES "Todo"("id") ON DELETE CASCADE ON UPDATE CASCADE;
