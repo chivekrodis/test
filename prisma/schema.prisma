@@ -11,7 +11,14 @@ datasource db {
 model Todo {
   id        Int      @id @default(autoincrement())
   title     String
-  checked   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  status    Status?
+}
+
+model Status {
+  id      Int     @id @default(autoincrement())
+  checked Boolean @default(false)
+  todo    Todo    @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  todoId  Int     @unique
 }

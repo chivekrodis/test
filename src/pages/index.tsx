@@ -1,14 +1,15 @@
 import { FC, useState } from 'react'
 import { trpc, url } from '../utils/trpc'
 import { useRouter } from 'next/router'
-import { Todo } from '@prisma/client'
+import { Status, Todo } from '@prisma/client'
 import Head from 'next/head'
-import Link from 'next/link'
 import { Button } from '../components/button'
 import { Layout } from '../components/layout'
 
 interface HomeProps {
-  todos: Todo[]
+  todos: (Todo & {
+    status: Status
+  })[]
 }
 
 const Home: FC<HomeProps> = ({ todos }) => {
@@ -68,12 +69,14 @@ const Home: FC<HomeProps> = ({ todos }) => {
           </div>
           {todos?.length > 0 && (
             <div className="mt-4">
-              {todos.map(({ id, title, checked }) => {
+              {todos.map(({ id, title, status }) => {
                 return (
-                  <li className="mb-1 flex items-center justify-between bg-slate-100 py-2" key={id}>
+                  <li className="mb-1 flex items-center bg-slate-100 py-2" key={id}>
                     <div
-                      className={`${checked ? 'line-through' : ''} ml-3 break-all hover:cursor-pointer`}
-                      onClick={() => toggleTogo({ id, checked })}
+                      className={`${
+                        status?.checked ? 'line-through' : ''
+                      } ml-3 flex-grow break-all hover:cursor-pointer`}
+                      onClick={() => toggleTogo(status)}
                     >
                       {title}
                     </div>
@@ -100,7 +103,7 @@ const Home: FC<HomeProps> = ({ todos }) => {
   )
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     console.log(url)
 

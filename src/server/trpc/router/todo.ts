@@ -15,12 +15,23 @@ export const todoRouter = router({
       const { input, ctx } = b
       console.log('input', input)
       // console.log('ctx', ctx);
-      const a = await ctx.prisma.todo.create({ data: input })
+      const a = await ctx.prisma.todo.create({
+        data: {
+          ...input,
+          status: {
+            create: {
+              checked: false,
+            },
+          },
+        },
+        include: { status: true },
+      })
       console.log('a', a)
 
       return input
     }),
   toggle: publicProcedure
+    .meta({ method: 'put' })
     .input(
       z.object({
         id: z.number(),
@@ -30,7 +41,7 @@ export const todoRouter = router({
     .mutation(async ({ input, ctx }) => {
       console.log(input)
       const { id, checked } = input
-      await ctx.prisma.todo.update({
+      await ctx.prisma.status.update({
         where: { id },
         data: { checked: !checked },
       })
@@ -40,10 +51,16 @@ export const todoRouter = router({
     await ctx.prisma.todo.delete({
       where: { id },
     })
+    return id
   }),
   getAll: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.todo.findMany({
-      orderBy: { createdAt: 'asc' },
+    console.log('start')
+
+    const data = await ctx.prisma.todo.findMany({
+      include: { status: true },
     })
+    console.log('data here', data)
+
+    return data
   }),
 })
